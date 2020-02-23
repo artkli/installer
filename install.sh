@@ -44,7 +44,7 @@ readonly LIBRARIES="\
   "
 
 # file, path names
-readonly INSTALLPATH=$(pwd)
+readonly INSTALLPATH=$(pwd|sed 's/ /?/g')
 readonly OWNERPATH="/home/pi"
 readonly DSTPATH="/home/pi/program"
 readonly INSTALLFILES="install.zip"
@@ -160,7 +160,9 @@ sleep_off() {
   
   if $ARMONLY; then
     interface=$(ip r|grep default|awk {'print $5'})
-    run_check iw $interface set power_save off
+    if [[ $interface =~ ^wlan ]]; then
+      run_check iw $interface set power_save off
+    fi
   fi
 
   run_check dpkg --configure -a
